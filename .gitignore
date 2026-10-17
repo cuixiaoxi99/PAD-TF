@@ -1,0 +1,37 @@
+# Large or generated artifacts
+data/
+third_party/
+checkpoints/
+logs/
+results/
+
+# Local experiment notes and provenance audits
+fig_data/
+code_changes.md
+minimal_validation_report.md
+protocol_audit.md
+result_provenance_audit.md
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Secrets and local environment files
+.env
+.env.*
+*.pem
+*.key
+
+# Local backup snapshots
+*.before_*
