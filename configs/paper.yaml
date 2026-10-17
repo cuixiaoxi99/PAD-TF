@@ -1,0 +1,160 @@
+project:
+  name: pad-tf-flashst
+  upstream_url: https://github.com/HKUDS/FlashST.git
+  upstream_commit: 39d4b8e445fde7ed5272151f7e74752d2c84c58e
+  backbone: STGCN
+
+paths:
+  data: data
+  upstream: third_party/FlashST
+  checkpoints: checkpoints
+  logs: logs
+  results: results
+
+datasets:
+  METR_LA:
+    label: METR-LA
+    values: METR_LA/METR-LA.csv
+    graph: METR_LA/adj_mx.pkl
+    graph_format: dcrnn_pickle
+    nodes: 207
+    start_weekday: 4
+    feature: speed
+  PEMS_BAY:
+    label: PEMS-BAY
+    values: PEMS_BAY/PEMS-BAY.csv
+    graph: PEMS_BAY/adj_mx_bay.pkl
+    graph_format: dcrnn_pickle
+    nodes: 325
+    start_weekday: 7
+    feature: speed
+  PEMS03:
+    label: PEMS03
+    values: PEMS03/PEMS03.npz
+    graph: PEMS03/PEMS03.csv
+    graph_format: edge_csv
+    node_ids: PEMS03/PEMS03.txt
+    nodes: 358
+    start_weekday: 6
+    feature: flow
+  PEMS04:
+    label: PEMS04
+    values: PEMS04/PEMS04.npz
+    graph: PEMS04/PEMS04.csv
+    graph_format: edge_csv
+    nodes: 307
+    start_weekday: 1
+    feature: flow
+  PEMS07:
+    label: PEMS07
+    values: PEMS07/PEMS07.npz
+    graph: PEMS07/PEMS07.csv
+    graph_format: edge_csv
+    nodes: 883
+    start_weekday: 1
+    feature: flow
+  PEMS08:
+    label: PEMS08
+    values: PEMS08/PEMS08.npz
+    graph: PEMS08/PEMS08.csv
+    graph_format: edge_csv
+    nodes: 170
+    start_weekday: 5
+    feature: flow
+  CA_District5:
+    label: LargeST-CA
+    values: CA_District5/CA_District5.npz
+    graph: CA_District5/CA_District5.npy
+    graph_format: matrix_npy
+    nodes: 211
+    start_weekday: 7
+    feature: flow
+
+pairs:
+  P1: {source: METR_LA, target: PEMS_BAY}
+  P2: {source: PEMS_BAY, target: METR_LA}
+  P3: {source: PEMS04, target: PEMS08}
+  P4: {source: PEMS08, target: PEMS04}
+  P5: {source: PEMS03, target: PEMS07}
+  P6: {source: PEMS07, target: PEMS03}
+  P7: {source: PEMS07, target: CA_District5}
+  P8: {source: CA_District5, target: PEMS07}
+
+data:
+  history: 12
+  horizon: 12
+  val_ratio: 0.2
+  test_ratio: 0.2
+  interval_minutes: 5
+  num_workers: 0
+
+model:
+  node_dim: 32
+  embed_dim: 32
+  num_layers: 3
+  temporal_dim: 32
+  ks: 3
+  kt: 3
+  blocks: [64, 32, 128]
+  dropout: 0.0
+
+training:
+  seeds: [2024]
+  batch_size: 64
+  batch_size_overrides: {PEMS07: 32}
+  effective_batch_size: 64
+  learning_rate: 0.003
+  source_epochs: 60
+  source_patience: 15
+  full_epochs: 20
+  retrain_epochs: 50
+  retrain_patience: 25
+  selection_ratio: 0.70
+  selection_epochs: 20
+  ssl_weight: 1.0
+  grad_clip: 5.0
+
+padtf:
+  alpha: 0.5
+  lambda: 0.3
+  epsilon: 1.0e-8
+  probe_ratio: 0.05
+  probe_train_fraction: 0.8
+  probe_block_gap: 24
+  probe_epochs: 2
+  b_min: 0.01
+  fixed_response_rate: 0.10
+  ratio_static_slope: -2.5
+  ratio_static_center: 0.4
+  ratio_coverage_weight: 0.10
+  ratio_coverage_power: 4.0
+  structural_risk_weight: 0.15
+  structural_epoch_cap: 15
+  structural_probe_split: 0.50
+  structural_high_ratio: 1.00
+  structural_default_ratio: 0.50
+  ratio_time_floor: 0.15
+  max_candidate_cost: 0.312
+  ratios: [0.05, 0.10, 0.20, 0.30, 0.50, 0.70, 1.00]
+  epochs: [2, 5, 8, 10, 15, 20]
+  epoch_predictor:
+    source: p1_p8_probe_formula_fit
+    features: [probe_gain, probe_tau, phi_static, signed_log_nodes, flow_target]
+    mean: [0.47679813120021325, 0.5352268541807732, 0.4978346340695969, 0.0, 0.75]
+    scale: [0.13678592288759497, 0.05712221155161405, 0.20638761654543233, 0.9242521311902177, 0.4330127018922193]
+    intercept: 27.370651026945275
+    coefficients: [-11.438329778190266, -6.698318781352613, 2.588457016954382, 9.252164303698152, 11.465377405203192]
+    minimum: 1
+    maximum: 50
+  calibration:
+    a: 12.0
+    k_max: 0.62814288
+    k_retrain: 0.58667353
+
+selectors:
+  embedding_batch_size: 16
+  coverage_profile_samples: 1024
+  max_diversity_anchors: 512
+  proxy_epochs: 5
+  mc_passes: 5
+  random_projection_dim: 32
