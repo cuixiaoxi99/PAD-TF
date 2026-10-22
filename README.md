@@ -88,12 +88,6 @@ See [docs/DATASETS.md](docs/DATASETS.md) for dataset provenance and the expected
 
 ## Quick start
 
-Run a small end-to-end check:
-
-```bash
-python -m padtf.cli smoke --pair P3 --seed 2024
-```
-
 Run PAD-TF for one transfer pair, or run all methods for that pair:
 
 ```bash
@@ -101,49 +95,8 @@ python -m padtf.cli run --pair P3 --seed 2024 --method PAD-TF
 python -m padtf.cli run-pair --pair P3 --seed 2024
 ```
 
-Run the restart-safe paper matrix and monitor progress:
-
-```bash
-bash scripts/launch_all.sh
-bash scripts/status.sh
-```
-
-Aggregate all available runs into CSV and LaTeX tables:
-
-```bash
-python -m padtf.cli aggregate
-```
-
 Outputs are written to `results/runs/` and `results/tables/`; logs and checkpoints go to `logs/` and `checkpoints/`. Completed JSON runs are skipped unless `--force` is supplied.
 
-## Baselines and accounting
-
-The runner includes Direct, Fixed-FT, Retrain, FlashST-Full, Random-FT, CoreSet-FT, Proxy-FT, ELFS-FT, BADGE-FT, and uncertainty-herding baselines. Selector overhead—including embedding extraction, proxy fitting, uncertainty estimation, and subset construction—is counted in target-domain cost.
-
-PAD-TF uses a 5% probe for two epochs, chooses a ratio/epoch budget from the configured grid, and applies CoreSet to the chosen data budget. The complete runner builds a seed-2024 response grid, performs leave-one-pair-out calibration, executes three independent seeds, and evaluates the declared ablations and controls.
-
-## Tests
-
-```bash
-python -m unittest discover -s tests -v
-```
-
-The current suite contains 18 unit tests covering configuration, signals, selectors, policy logic, cost accounting, protocol auditing, and result verification.
-
-## Reproducibility notes
-
-- Generated tables are derived only from per-run JSON records; manuscript values are never inserted into result files.
-- The full experiment matrix is GPU-intensive. Start with `smoke`, then one pair, before launching `scripts/launch_all.sh`.
-- Raw datasets and trained checkpoints are excluded because of size and upstream distribution terms.
-- No software license has been assigned yet. Until one is added by the authors, normal copyright restrictions apply.
-
-## Citation
-
-The paper is currently under review. A BibTeX entry will be added after publication metadata is available.
-
-If you use this code before then, please cite the repository and the paper title:
-
-> *Probe-based Adaptive Domain Transfer for Cost-aware Cross-domain Traffic Forecasting.*
 
 ## Acknowledgements
 
