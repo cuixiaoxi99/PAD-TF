@@ -1,5 +1,4 @@
 # Large or generated artifacts
-data/
 third_party/
 checkpoints/
 logs/

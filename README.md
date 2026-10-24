@@ -29,6 +29,7 @@ The implementation runs on the official [FlashST](https://github.com/HKUDS/Flash
 
 ```text
 PAD-TF/
+├── data/                # P1--P6 datasets and graph metadata
 ├── configs/              # Paper protocol and experiment settings
 ├── padtf/                # Core signals, selectors, policies, runner, aggregation
 ├── scripts/              # Setup and reproducibility entry points
@@ -38,7 +39,7 @@ PAD-TF/
 └── requirements.txt      # Python dependencies beyond PyTorch
 ```
 
-Large datasets, upstream code, checkpoints, logs, and generated results are intentionally excluded from version control.
+The datasets required by P1--P6 are included under `data/`. P7/P8 data, upstream code, checkpoints, logs, and generated results are excluded from version control.
 
 ## Experimental protocol
 

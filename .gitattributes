@@ -6,3 +6,5 @@
 *.md text eol=lf
 *.png binary
 *.pdf binary
+/data/** binary
+/data/README.md text diff eol=lf
