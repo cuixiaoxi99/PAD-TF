@@ -54,10 +54,6 @@ The datasets required by P1--P6 are included under `data/`. P7/P8 data, upstream
 | P7 | PEMS07 | LargeST-CA |
 | P8 | LargeST-CA | PEMS07 |
 
-P7/P8 use the FlashST-compatible 211-sensor `CA_District5` subset, not the full 8,600-sensor LargeST-CA dataset. All experiments use 12 historical and 12 forecasting steps at five-minute resolution. The paper matrix uses seeds `2024`, `2025`, and `2026`.
-
-The principal utility is the relative RMSE reduction over Direct minus `0.3 ×` target-domain cost normalized by Retrain. Each run records metrics, timing, selected budgets, configuration hashes, checkpoint hashes, and the pinned upstream revision.
-
 ## Installation
 
 ### Option A: automated Linux setup
